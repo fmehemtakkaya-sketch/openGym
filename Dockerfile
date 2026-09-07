@@ -27,5 +27,14 @@ RUN npm run build
 FROM nginxinc/nginx-unprivileged:alpine
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
+
+# Uebungsbilder (07.09.2026):
+# docker-compose zieht sie einmalig von github.com/hasaneyldrm/exercises-dataset
+# in ein Volume. Auf Dockup werden sie stattdessen ins Image kopiert — sie
+# liegen bereits im Repo (media/img, media/gif, je 1324 Dateien, ~138 MB) und
+# aendern sich nie. Das ist besser als der Download beim Bauen: kein Netzzugriff
+# und kein fremdes Repo im Build-Pfad, reproduzierbar, und kein Volume noetig,
+# das nach jedem Ausrollen neu befuellt werden muesste.
+COPY media/img /usr/share/nginx/html/img
+COPY media/gif /usr/share/nginx/html/gif
 EXPOSE 3000
-# exercise media (img/gif) is mounted at runtime from the media volume
